@@ -1,0 +1,414 @@
+/* ================= 模型管理页面样式 ================= */
+
+/* 模型管理容器 */
+.model-management-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+    background-color: #f5f7fa;
+}
+
+/* 顶部操作栏 */
+.model-management-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+/* 筛选栏 */
+.filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-input, .filter-select {
+    padding: 8px 12px;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 160px;
+    transition: border-color 0.3s;
+}
+
+.filter-input:focus, .filter-select:focus {
+    border-color: #409eff;
+    outline: none;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: 12px;
+}
+
+/* 表格容器 */
+.model-table-container {
+    flex: 1;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+/* 主表格样式 */
+.model-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.model-table th, .model-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #ebeef5;
+}
+
+.model-table th {
+    background-color: #f5f7fa;
+    font-weight: 600;
+    color: #303133;
+}
+
+.model-table tr:hover {
+    background-color: #f5f7fa;
+}
+
+/* 展开图标 */
+.expand-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    transition: transform 0.3s;
+    color: #909399;
+}
+
+.expand-icon.expanded {
+    transform: rotate(90deg);
+}
+
+/* 操作按钮 */
+.action-buttons-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 4px;
+    justify-content: flex-start;
+    min-width: 0;
+}
+
+.action-btn {
+    padding: 4px 8px;
+    margin: 0;
+    font-size: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-block;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: fit-content;
+}
+
+.action-btn-add {
+    background-color: #409eff;
+    color: white;
+}
+
+.action-btn-edit {
+    background-color: #e6a23c;
+    color: white;
+}
+
+.action-btn-delete {
+    background-color: #f56c6c;
+    color: white;
+}
+
+.action-btn:hover {
+    opacity: 0.8;
+}
+
+/* 嵌套子表格 */
+.detail-table-container {
+    display: none;
+    margin: 0;
+    background-color: #f9f9f9;
+}
+
+.detail-table-container.show {
+    display: table-row;
+}
+
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.detail-table th, .detail-table td {
+    padding: 10px 16px 10px 40px;
+    text-align: left;
+    border-bottom: 1px solid #ebeef5;
+}
+
+.detail-table th {
+    background-color: #f0f2f5;
+    font-weight: 500;
+    color: #606266;
+}
+
+.detail-table tr:hover {
+    background-color: #f0f2f5;
+}
+
+/* 弹窗样式 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    width: 600px;
+    max-height: 80vh;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.8);
+    transition: transform 0.3s;
+}
+
+.modal-overlay.show .modal-content {
+    transform: scale(1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #ebeef5;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #303133;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #909399;
+    cursor: pointer;
+}
+
+.modal-close:hover {
+    color: #606266;
+}
+
+.modal-body {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid #ebeef5;
+}
+
+/* 表单样式 */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #606266;
+}
+
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: #409eff;
+    outline: none;
+}
+
+.form-textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* 文件上传 */
+.file-upload-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-browse-btn {
+    padding: 8px 12px;
+    background-color: #409eff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.file-browse-btn:hover {
+    background-color: #66b1ff;
+}
+
+.file-name {
+    font-size: 14px;
+    color: #606266;
+}
+
+/* 步进器 */
+.stepper-container {
+    display: flex;
+    align-items: center;
+    width: 150px;
+}
+
+.stepper-btn {
+    width: 32px;
+    height: 32px;
+    background-color: #f5f7fa;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #606266;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.stepper-btn:hover {
+    background-color: #e6e8eb;
+}
+
+.stepper-input {
+    flex: 1;
+    height: 32px;
+    text-align: center;
+    border: 1px solid #dcdfe6;
+    border-left: none;
+    border-right: none;
+    font-size: 14px;
+}
+
+.stepper-input:focus {
+    outline: none;
+    border-color: #409eff;
+}
+
+/* 按钮样式 */
+.btn {
+    padding: 8px 16px;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #606266;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn:hover {
+    border-color: #409eff;
+    color: #409eff;
+}
+
+.btn-primary {
+    background-color: #409eff;
+    color: white;
+    border-color: #409eff;
+}
+
+.btn-primary:hover {
+    background-color: #66b1ff;
+    border-color: #66b1ff;
+}
+
+.btn-default {
+    background-color: #fff;
+    color: #606266;
+    border-color: #dcdfe6;
+}
+
+.btn-default:hover {
+    background-color: #f5f7fa;
+}
+
+.btn-success {
+    background-color: #67c23a;
+    color: white;
+    border-color: #67c23a;
+}
+
+.btn-success:hover {
+    background-color: #85ce61;
+    border-color: #85ce61;
+}

@@ -1,0 +1,199 @@
+/* ================= 按钮样式修复 ================= */
+
+/* 修复所有按钮样式，确保可见性 */
+.btn, .action-btn, .action-button, .toggle-btn, .file-browse-btn, .stepper-btn, .production-tab {
+    background-color: #f0f0f0 !important; /* 使用浅灰色背景代替白色 */
+    color: #333 !important; /* 确保文字颜色足够深 */
+    border: 1px solid #d9d9d9 !important; /* 添加边框增强可见性 */
+}
+
+/* 生产报表页面Tab按钮特定样式 */
+.production-tab {
+    background-color: #f0f0f0 !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.production-tab:hover {
+    color: var(--text-primary) !important;
+    background: rgba(24, 144, 255, 0.1) !important;
+    border-color: var(--brand-color) !important;
+}
+
+.production-tab.active {
+    color: white !important;
+    background: var(--brand-color) !important;
+    font-weight: 600 !important;
+    border-color: var(--brand-color) !important;
+}
+
+/* 版类型管理页面按钮特定样式 */
+.board-type-item {
+    background-color: #f0f0f0 !important;
+    color: #333 !important; /* 强制设置文字颜色为深灰色 */
+    border: 1px solid #d9d9d9 !important; /* 添加边框增强可见性 */
+}
+
+.board-type-item:hover {
+    background-color: rgba(24, 144, 255, 0.1) !important;
+    border-color: var(--brand-color) !important;
+}
+
+.board-type-item.selected {
+    background-color: var(--brand-color) !important;
+    color: white !important; /* 选中项保持高亮色 */
+    border-color: var(--brand-color) !important;
+}
+
+/* 表单操作区域按钮 */
+.form-actions .btn {
+    margin-left: 10px;
+}
+
+/* 主要按钮样式 */
+.btn-primary, .action-button {
+    background-color: var(--brand-color) !important;
+    color: white !important;
+    border-color: var(--brand-color) !important;
+}
+
+.btn-primary:hover, .action-button:hover {
+    background-color: #40a9ff !important;
+    border-color: #40a9ff !important;
+}
+
+/* 危险按钮样式 */
+.btn-danger, .action-btn-delete {
+    background-color: var(--error-color) !important;
+    color: white !important;
+    border-color: var(--error-color) !important;
+}
+
+.btn-danger:hover, .action-btn-delete:hover {
+    background-color: #ff7875 !important;
+    border-color: #ff7875 !important;
+}
+
+/* 编辑按钮样式 */
+.action-btn-edit {
+    background-color: var(--warning-color) !important;
+    color: white !important;
+    border-color: var(--warning-color) !important;
+}
+
+/* 复制按钮样式 */
+.action-btn-copy {
+    background-color: var(--brand-color) !important;
+    color: white !important;
+    border-color: var(--brand-color) !important;
+}
+
+/* 成功按钮样式 */
+.btn-success {
+    background-color: var(--success-color) !important;
+    color: white !important;
+    border-color: var(--success-color) !important;
+}
+
+/* 轮廓按钮样式 */
+.btn-outline {
+    background-color: transparent !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.btn-outline:hover {
+    background-color: var(--bg-hover) !important;
+    border-color: var(--brand-color) !important;
+}
+
+/* 默认按钮样式 */
+.btn-default {
+    background-color: #f0f0f0 !important;
+    color: var(--text-primary) !important;
+    border-color: #d9d9d9 !important;
+}
+
+.btn-default:hover {
+    background-color: #e6f7ff !important;
+    border-color: var(--brand-color) !important;
+}
+
+/* 刷新按钮样式 */
+.refresh-btn {
+    background-color: #f0f0f0 !important;
+    color: var(--text-secondary) !important;
+    border: 1px solid #d9d9d9 !important;
+    border-radius: 4px !important;
+}
+
+.refresh-btn:hover {
+    background-color: #e6f7ff !important;
+    color: var(--brand-color) !important;
+    border-color: var(--brand-color) !important;
+}
+
+/* 步进器按钮样式 */
+.stepper-btn {
+    background-color: #f5f5f5 !important;
+    color: var(--text-secondary) !important;
+    border: 1px solid #d9d9d9 !important;
+}
+
+.stepper-btn:hover {
+    background-color: #e6f7ff !important;
+    color: var(--brand-color) !important;
+    border-color: var(--brand-color) !important;
+}
+
+/* 文件浏览按钮样式 */
+.file-browse-btn {
+    background-color: var(--brand-color) !important;
+    color: white !important;
+    border-color: var(--brand-color) !important;
+}
+
+.file-browse-btn:hover {
+    background-color: #40a9ff !important;
+    border-color: #40a9ff !important;
+}
+
+/* 删除按钮样式 */
+.delete-btn {
+    background-color: transparent !important;
+    color: var(--error-color) !important;
+    border: none !important;
+}
+
+.delete-btn:hover {
+    color: #c52b2f !important;
+    background-color: rgba(255, 77, 79, 0.1) !important;
+}
+
+/* 模态框关闭按钮样式 */
+.modal-close {
+    background-color: transparent !important;
+    color: var(--text-secondary) !important;
+    border: none !important;
+}
+
+.modal-close:hover {
+    color: var(--text-primary) !important;
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* 确保所有按钮在悬停时有明显的视觉反馈 */
+.btn:hover, .action-btn:hover, .action-button:hover, .toggle-btn:hover, 
+.file-browse-btn:hover, .stepper-btn:hover, .btn-outline:hover, 
+.btn-default:hover, .btn-success:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 确保所有按钮在点击时有明显的视觉反馈 */
+.btn:active, .action-btn:active, .action-button:active, .toggle-btn:active, 
+.file-browse-btn:active, .stepper-btn:active, .btn-outline:active, 
+.btn-default:active, .btn-success:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}

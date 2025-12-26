@@ -1,0 +1,24 @@
+/* ================= CSS 变量定义 (主题配置) ================= */
+:root {
+    --sidebar-bg: #001529;        /* 侧边栏背景深蓝 */
+    --sidebar-sub-bg: #000c17;    /* 子菜单背景更深 */
+    --text-nav-normal: #a6adb4;   /* 导航默认文字 */
+    --text-nav-hover: #ffffff;    /* 导航悬停文字 */
+    --brand-color: #1890ff;       /* 品牌主色调 */
+
+    --main-bg: #f0f2f5;           /* 内容区背景灰 */
+    --bg-color: #f0f2f5;          /* 页面背景色 */
+    --card-bg: #ffffff;           /* 卡片背景白 */
+    --border-color: #e8e8e8;      /* 边框颜色 */
+
+    --text-primary: #262626;      /* 主要文字 */
+    --text-secondary: #595959;    /* 次要文字 */
+    --text-hint: #8c8c8c;         /* 提示文字 */
+
+    --header-height: 64px;
+    --sidebar-width: 256px;       /* 稍微加宽以容纳子菜单 */
+    
+    --success-color: #52c41a;
+    --warning-color: #faad14;
+    --error-color: #ff4d4f;
+}

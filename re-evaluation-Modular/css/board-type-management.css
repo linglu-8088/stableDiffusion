@@ -1,0 +1,268 @@
+/* 版类型管理页面样式 */
+
+.board-type-management-container {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* 左侧配置区 */
+.board-type-config-panel {
+    flex: 1;
+    padding: 15px; /* 减少内边距从20px到15px */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 右侧列表栏 */
+.board-type-list-panel {
+    width: 300px;
+    background-color: var(--bg-secondary);
+    border-left: 1px solid var(--border-color); /* 修改为左边框 */
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-container {
+    position: relative;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 32px 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.search-icon {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+.board-type-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.board-type-item {
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background-color: var(--bg-primary);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #333 !important; /* 强制设置文字颜色为深灰色 */
+}
+
+.board-type-item:hover {
+    background-color: var(--hover-bg);
+}
+
+.board-type-item.selected {
+    background-color: var(--primary-color);
+    color: white !important; /* 选中项保持高亮色 */
+}
+
+.board-type-name {
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: inherit; /* 继承父元素的颜色 */
+}
+
+.board-type-desc {
+    font-size: 12px;
+    opacity: 0.8;
+    color: inherit; /* 继承父元素的颜色 */
+}
+
+.config-section {
+    margin-bottom: 12px; /* 减少间距从16px到12px */
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 10px; /* 减少内边距从12px到10px */
+}
+
+/* 预览区域特殊样式 */
+.preview-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+    min-height: 0; /* 允许flex子项收缩 */
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px; /* 减少间距从12px到8px */
+    color: var(--text-primary);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px; /* 减少间距从12px到8px */
+}
+
+.form-group {
+    margin-bottom: 8px; /* 减少间距从12px到8px */
+}
+
+.form-row {
+    display: flex;
+    gap: 12px; /* 减少间距从16px到12px */
+    margin-bottom: 8px; /* 减少间距从12px到8px */
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 4px; /* 减少间距从6px到4px */
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.form-input, .form-textarea {
+    width: 100%;
+    padding: 6px 10px; /* 减少内边距从8px 12px到6px 10px */
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 14px;
+    height: 32px; /* 设置固定高度为32px */
+    box-sizing: border-box;
+}
+
+/* 紧凑型文本框 */
+.compact-textarea {
+    height: 64px; /* 设置为2行高度 */
+    resize: vertical;
+    min-height: 64px;
+}
+
+.form-textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.form-input:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+}
+
+/* 预览区域 */
+.preview-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px; /* 减少内边距从15px到10px */
+    background-color: #f0f0f0; /* 添加背景色 */
+    border: 1px solid #ddd; /* 添加边框 */
+    border-radius: 4px;
+    flex: 1; /* 占据剩余的垂直空间 */
+    overflow: auto;
+    width: 100%; /* 确保宽度适应左侧容器 */
+    min-height: 300px; /* 设置最小高度 */
+}
+
+.board-preview {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    position: relative;
+    display: grid;
+    padding: 10px;
+    max-width: 100%; /* 确保不超出容器宽度 */
+    overflow: auto; /* 添加滚动条，防止内容溢出 */
+}
+
+.preview-cell {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.preview-cell:hover {
+    background-color: #f5f5f5;
+}
+
+.preview-cell.selected {
+    background-color: #ff6b6b;
+    color: white;
+    border-color: #ff5252;
+}
+
+/* 表单操作区域 */
+.form-actions {
+    display: flex;
+    justify-content: center; /* 修改为居中对齐 */
+    margin-top: 10px; /* 减少间距从15px到10px */
+    padding-top: 10px; /* 减少内边距从12px到10px */
+    border-top: 1px solid #eee;
+}
+
+.form-actions .btn {
+    margin-left: 10px;
+}
+
+/* 通知样式 */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification.success {
+    background-color: var(--success-color);
+}
+
+.notification.error {
+    background-color: var(--danger-color);
+}
+
+.notification.info {
+    background-color: var(--info-color);
+}
+
+.notification.warning {
+    background-color: var(--warning-color);
+}

@@ -1,0 +1,731 @@
+/* ================= 开关控件样式 ================= */
+.switch-container {
+    display: flex;
+    margin-bottom: 24px;
+    padding: 16px;
+    background-color: #fafafa;
+    border-radius: 4px;
+}
+
+.switch-item {
+    display: flex;
+    align-items: center;
+    margin-right: 40px;
+}
+
+.switch-label {
+    margin-right: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--brand-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+/* ================= 按钮样式 ================= */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.btn {
+    padding: 8px 16px;
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+    color: var(--text-primary);
+}
+
+.btn:hover {
+    border-color: var(--brand-color);
+    color: var(--text-primary);
+    background-color: #fafafa;
+}
+
+.btn-primary {
+    background-color: var(--brand-color);
+    color: white;
+    border-color: var(--brand-color);
+}
+
+.btn-primary:hover {
+    background-color: #40a9ff;
+    color: white;
+    border-color: #40a9ff;
+}
+
+.btn-danger {
+    background-color: var(--error-color);
+    color: white;
+    border-color: var(--error-color);
+}
+
+.btn-danger:hover {
+    background-color: #ff7875;
+    color: white;
+    border-color: #ff7875;
+}
+
+/* 顶部删除按钮特殊样式 */
+.button-group .btn-danger {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 16px;
+}
+
+/* ================= 表格样式 ================= */
+.warning-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.warning-table th, 
+.warning-table td {
+    padding: 12px 8px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.warning-table th {
+    background-color: #fafafa;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.warning-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* ================= 复选框样式 ================= */
+.checkbox-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.checkbox-input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--brand-color);
+}
+
+/* ================= 输入框样式 ================= */
+.input-field {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.input-field:focus {
+    border-color: var(--brand-color);
+    outline: none;
+}
+
+.select-field {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+/* ================= 级别复选框样式 ================= */
+.level-checkbox-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.level-checkbox {
+    width: 16px;
+    height: 16px;
+    appearance: none;
+    border: 1px solid var(--border-color);
+    position: relative;
+    cursor: pointer;
+}
+
+.level-checkbox:checked {
+    background-color: var(--brand-color);
+    border-color: var(--brand-color);
+}
+
+.level-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 0px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.level-checkbox.mild:checked {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.level-checkbox.moderate:checked {
+    background-color: var(--warning-color);
+    border-color: var(--warning-color);
+}
+
+.level-checkbox.severe:checked {
+    background-color: var(--error-color);
+    border-color: var(--error-color);
+}
+
+/* ================= 删除操作按钮 ================= */
+.delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--error-color);
+    transition: all 0.3s;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.delete-btn:hover {
+    color: #c52b2f;
+}
+
+/* 垃圾桶图标样式 */
+.trash-icon {
+    font-size: 16px;
+}
+
+/* 删除行样式 */
+.deleted-row {
+    opacity: 0.5;
+    text-decoration: line-through;
+}
+
+/* ================= 数字输入框 (Number Stepper) 样式 ================= */
+.number-stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: #fff;
+    overflow: hidden;
+    transition: all 0.3s;
+    width: 120px;
+    height: 32px;
+}
+
+.number-stepper:hover {
+    border-color: var(--brand-color);
+}
+
+.number-stepper:focus-within {
+    border-color: var(--brand-color);
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.stepper-btn {
+    width: 32px;
+    height: 100%;
+    border: none;
+    background-color: #fafafa;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.stepper-btn:hover {
+    background-color: #f0f0f0;
+    color: var(--text-primary);
+}
+
+.stepper-btn:active {
+    background-color: #e6f7ff;
+    color: var(--brand-color);
+}
+
+.stepper-btn.decrease {
+    border-right: 1px solid var(--border-color);
+}
+
+.stepper-btn.increase {
+    border-left: 1px solid var(--border-color);
+}
+
+.stepper-input {
+    flex: 1;
+    border: none;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-primary);
+    background-color: transparent;
+    outline: none;
+    padding: 0 4px;
+}
+
+.stepper-input::-webkit-inner-spin-button,
+.stepper-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* 只读状态的数字输入框 */
+.number-stepper.readonly {
+    border: none;
+    background: transparent;
+}
+
+.number-stepper.readonly .stepper-btn {
+    display: none;
+}
+
+.number-stepper.readonly .stepper-input {
+    cursor: pointer;
+    padding: 8px 12px;
+    width: 100%;
+    height: auto;
+}
+
+.number-stepper.readonly:hover {
+    background-color: rgba(24, 144, 255, 0.05);
+}
+
+/* ================= 双击编辑功能样式 ================= */
+/* 只读状态的输入框和选择框 */
+.editable-field {
+    border: none !important;
+    background: transparent !important;
+    color: var(--text-primary);
+    text-align: center;
+    cursor: pointer;
+    padding: 8px 12px;
+    width: 100%;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.editable-field:hover {
+    background-color: rgba(24, 144, 255, 0.05);
+}
+
+/* 编辑状态的输入框和选择框 */
+.editable-field.editing {
+    border: 1px solid var(--brand-color) !important;
+    background-color: #fff !important;
+    cursor: text;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* 只读状态的选择框 */
+.editable-field.select-readonly {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none !important;
+    background: transparent !important;
+    color: var(--text-primary);
+    text-align: center;
+    cursor: pointer;
+    padding: 8px 12px;
+    width: 100%;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.editable-field.select-readonly:hover {
+    background-color: rgba(24, 144, 255, 0.05);
+}
+
+/* 编辑状态的选择框 */
+.editable-field.select-editing {
+    appearance: menulist;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+    border: 1px solid var(--brand-color) !important;
+    background-color: #fff !important;
+    cursor: pointer;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* ================= Toggle 按钮组样式 ================= */
+.toggle-button-group {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+}
+
+.toggle-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    background-color: #fff;
+    color: var(--text-secondary);
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.toggle-btn:hover {
+    border-color: var(--brand-color);
+    color: var(--text-primary);
+}
+
+.toggle-btn.active {
+    background-color: var(--brand-color);
+    color: white;
+    border-color: var(--brand-color);
+}
+
+/* ================= 刷新按钮样式 ================= */
+.refresh-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.3s;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.refresh-btn:hover {
+    color: var(--brand-color);
+    background-color: rgba(24, 144, 255, 0.1);
+}
+
+/* ================= 搜索框样式 ================= */
+.search-container {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.search-input:focus {
+    border-color: var(--brand-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* ================= 按钮样式 ================= */
+.action-button {
+    padding: 8px 16px;
+    background-color: var(--brand-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.action-button:hover {
+    background-color: #40a9ff;
+    transform: translateY(-1px);
+}
+
+.action-button:active {
+    transform: translateY(0);
+}
+
+/* ================= 复选框字段样式 ================= */
+.checkbox-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 0;
+}
+
+.checkbox-field input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--brand-color);
+    cursor: pointer;
+}
+
+.checkbox-label {
+    font-size: 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+    user-select: none;
+}
+
+/* ================= 缺陷列表样式 ================= */
+.defect-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.defect-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: #fafafa;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.defect-item:hover {
+    background-color: #f5f5f5;
+    border-color: var(--border-color);
+}
+
+.defect-checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--brand-color);
+    cursor: pointer;
+}
+
+.defect-name {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+/* ================= 日志级别标签样式 ================= */
+.log-level-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    min-width: 60px;
+}
+
+.log-level-info {
+    background-color: #e6f7ff;
+    color: #1890ff;
+    border: 1px solid #91d5ff;
+}
+
+.log-level-warning {
+    background-color: #fffbe6;
+    color: #faad14;
+    border: 1px solid #ffe58f;
+}
+
+.log-level-error {
+    background-color: #fff2f0;
+    color: #ff4d4f;
+    border: 1px solid #ffccc7;
+}
+
+.log-level-success {
+    background-color: #f6ffed;
+    color: #52c41a;
+    border: 1px solid #b7eb8f;
+}
+
+/* ================= 分页控件样式 ================= */
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 16px 0;
+    border-top: 1px solid var(--border-color);
+}
+
+.pagination-info {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.page-info {
+    color: var(--text-primary);
+    font-size: 14px;
+    margin: 0 12px;
+}
+
+/* ================= 模态框样式 ================= */
+.log-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.log-modal-content {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color 0.3s;
+}
+
+.modal-close:hover {
+    color: var(--text-primary);
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.detail-row {
+    display: flex;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    width: 120px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.detail-value {
+    flex: 1;
+    color: var(--text-primary);
+    word-break: break-all;
+}
+
+.detail-value pre {
+    background: #f5f5f5;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    overflow-x: auto;
+    margin: 0;
+}

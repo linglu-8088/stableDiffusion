@@ -1,0 +1,2322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二次复盘系统</title>
+    
+    <!-- 引入CSS文件 -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/board-type-management.css">
+    <link rel="stylesheet" href="css/pages/modelManagement.css">
+    <link rel="stylesheet" href="css/pages/materialManagement.css">
+    <!-- 按钮样式修复 -->
+    <link rel="stylesheet" href="css/button-fix.css">
+    
+    <!-- 引入ECharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    
+    <!-- 引入Fabric.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/fabric@5.3.0/dist/fabric.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧导航栏 -->
+        <aside class="sidebar">
+            <div class="logo-box">二次复盘系统</div>
+            <nav class="nav-scroller">
+                <!-- 审图模块 -->
+                <details>
+                    <summary>审图</summary>
+                    <div class="submenu-list">
+                        <div class="sub-item" data-page="single-image-review">单图审图</div>
+                        <div class="sub-item" data-page="multi-image-review">多图审图</div>
+                    </div>
+                </details>
+
+                <!-- 报表模块 -->
+                <details>
+                    <summary>报表</summary>
+                    <div class="submenu-list">
+                        <div class="sub-item" data-page="mapping">Mapping</div>
+                        <div class="sub-item" data-page="trends">趋势分析</div>
+                        <div class="sub-item" data-page="production-report">生产报表</div>
+                        <div class="sub-item" data-page="inspection-report">检验报表</div>
+                    </div>
+                </details>
+
+                <!-- 智能预警模块 -->
+                <details open>
+                    <summary>智能预警</summary>
+                    <div class="submenu-list">
+                        <div class="sub-item" data-page="high-risk-warning">高危缺陷预警</div>
+                        <div class="sub-item" data-page="defect-excess-warning">缺陷超限预警</div>
+                    </div>
+                </details>
+
+                <!-- 生产配置模块 -->
+                <details>
+                    <summary>生产配置</summary>
+                    <div class="submenu-list">
+                        <div class="sub-item" data-page="parameter-config">参数配置</div>
+                        <div class="sub-item" data-page="machine-management">机台管理</div>
+                        <div class="sub-item" data-page="version-management">版类型管理</div>
+                        <div class="sub-item" data-page="material-management">料号管理</div>
+                        <div class="sub-item" data-page="model-management">模型管理</div>
+                        <div class="sub-item" data-page="label-management">标签管理</div>
+                    </div>
+                </details>
+
+                <!-- 通用管理模块 -->
+                <details>
+                    <summary>通用管理</summary>
+                    <div class="submenu-list">
+                        <div class="sub-item" data-page="dataset-management">数据集管理</div>
+                        <div class="sub-item" data-page="data-annotation">数据标注</div>
+                        <div class="sub-item" data-page="project-settings">项目设置</div>
+                    </div>
+                </details>
+
+                <!-- 独立功能页面 -->
+                <div class="menu-link" data-page="template-config">模版配置</div>
+                <div class="menu-link" data-page="user-management">人员管理</div>
+                <div class="menu-link" data-page="log-management">日志管理</div>
+            </nav>
+        </aside>
+
+        <!-- 中间主内容区 -->
+        <main class="main-content">
+            <header class="top-bar">
+                <span>智能预警</span>
+                <span> / </span>
+                <span class="breadcrumb-active" id="breadcrumbActive">高危缺陷预警</span>
+            </header>
+
+            <div class="content-scroll-area">
+                <!-- 高危缺陷预警页面内容 -->
+                <div class="page-content active" id="highRiskWarningPage">
+                    <div class="placeholder-container">
+                        <h2 class="section-title">高危缺陷预警</h2>
+
+                        <!-- 开关控件 -->
+                        <div class="switch-container">
+                            <div class="switch-item">
+                                <label class="switch-label">高危预警</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="highRiskWarning" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="switch-item">
+                                <label class="switch-label">预警加锁</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="warningLock">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 按钮组 -->
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="addNewRow('high-risk')">+ 新增</button>
+                            <button class="btn btn-danger" onclick="deleteSelected('high-risk')">
+                                <span class="trash-icon">🗑️</span> 删除选中
+                            </button>
+                        </div>
+
+                        <!-- 预警表格 -->
+                        <table class="warning-table" id="highRiskTable">
+                            <thead>
+                                <tr>
+                                    <th width="60">选中</th>
+                                    <th width="200">缺陷</th>
+                                    <th width="150">标签类型</th>
+                                    <th width="100">轻度</th>
+                                    <th width="100">中度</th>
+                                    <th width="100">严重</th>
+                                    <th width="150">操作</th>
+                                    <th width="80">删除</th>
+                                </tr>
+                            </thead>
+                            <tbody id="highRiskTableBody">
+                                <tr>
+                                    <td>
+                                        <div class="checkbox-container">
+                                            <input type="checkbox" class="checkbox-input" data-row-id="1">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="editable-field" value="表面划痕" placeholder="请输入缺陷名称" data-field-type="text">
+                                    </td>
+                                    <td>
+                                        <select class="editable-field select-readonly" data-field-type="select">
+                                            <option selected>外观缺陷</option>
+                                            <option>尺寸偏差</option>
+                                            <option>功能异常</option>
+                                            <option>其他</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div class="level-checkbox-container">
+                                            <input type="checkbox" class="level-checkbox mild" checked>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="level-checkbox-container">
+                                            <input type="checkbox" class="level-checkbox moderate">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="level-checkbox-container">
+                                            <input type="checkbox" class="level-checkbox severe">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select class="select-field">
+                                            <option>自动标记</option>
+                                            <option selected>人工复检</option>
+                                            <option>暂停生产</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button class="delete-btn" onclick="deleteRow(this, 'high-risk')">
+                                            <span class="trash-icon">🗑️</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="checkbox-container">
+                                            <input type="checkbox" class="checkbox-input" data-row-id="2">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="editable-field" value="颜色偏差" placeholder="请输入缺陷名称" data-field-type="text">
+                                    </td>
+                                    <td>
+                                        <select class="editable-field select-readonly" data-field-type="select">
+                                            <option selected>外观缺陷</option>
+                                            <option>尺寸偏差</option>
+                                            <option>功能异常</option>
+                                            <option>其他</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div class="level-checkbox-container">
+                                            <input type="checkbox" class="level-checkbox mild">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="level-checkbox-container">
+                                            <input type="checkbox" class="level-checkbox moderate" checked>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="level-checkbox-container">
+                                            <input type="checkbox" class="level-checkbox severe">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select class="select-field">
+                                            <option>自动标记</option>
+                                            <option selected>人工复检</option>
+                                            <option>暂停生产</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button class="delete-btn" onclick="deleteRow(this, 'high-risk')">
+                                            <span class="trash-icon">🗑️</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 缺陷超限预警页面内容 -->
+                <div class="page-content" id="defectExcessWarningPage">
+                    <div class="placeholder-container">
+                        <h2 class="section-title">缺陷超限预警</h2>
+
+                        <!-- 开关控件 -->
+                        <div class="switch-container">
+                            <div class="switch-item">
+                                <label class="switch-label">超限预警</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="excessWarning" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="switch-item">
+                                <label class="switch-label">预警加锁</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="warningLockExcess">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 按钮组 -->
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="addNewRow('excess-warning')">+ 新增</button>
+                            <button class="btn btn-danger" onclick="deleteSelected('excess-warning')">
+                                <span class="trash-icon">🗑️</span> 删除选中
+                            </button>
+                        </div>
+
+                        <!-- 预警表格 -->
+                        <table class="warning-table" id="excessWarningTable">
+                            <thead>
+                                <tr>
+                                    <th width="60">选中</th>
+                                    <th width="200">缺陷</th>
+                                    <th width="150">标签类型</th>
+                                    <th width="100">轻度</th>
+                                    <th width="100">中度</th>
+                                    <th width="100">严重</th>
+                                    <th width="120">数量</th>
+                                    <th width="150">操作</th>
+                                    <th width="80">删除</th>
+                                </tr>
+                            </thead>
+                            <tbody id="excessWarningTableBody">
+                                <tr>
+                                    <td>
+                                        <div class="checkbox-container">
+                                            <input type="checkbox" class="checkbox-input" data-row-id="1">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="editable-field" value="表面划痕" placeholder="请输入缺陷名称" data-field-type="text">
+                                    </td>
+                                    <td>
+                                        <select class="editable-field select-readonly" data-field-type="select">
+                                            <option selected>外观缺陷</option>
+                                            <option>尺寸偏差</option>
+                                            <option>功能异常</option>
+                                            <option>其他</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div class="level-checkbox-container">
+                                            <input type="checkbox" class="level-checkbox mild" checked>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="level-checkbox-container">
+                                            <input type="checkbox" class="level-checkbox moderate">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="level-checkbox-container">
+                                            <input type="checkbox" class="level-checkbox severe">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="number-stepper readonly" id="stepper-1">
+                                            <button class="stepper-btn decrease" onclick="UiUtils.decreaseValue('stepper-1')">−</button>
+                                            <input type="number" class="stepper-input" value="5" min="0" max="999" readonly>
+                                            <button class="stepper-btn increase" onclick="UiUtils.increaseValue('stepper-1')">+</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select class="select-field">
+                                            <option>自动标记</option>
+                                            <option selected>人工复检</option>
+                                            <option>暂停生产</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button class="delete-btn" onclick="deleteRow(this, 'excess-warning')">
+                                            <span class="trash-icon">🗑️</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="checkbox-container">
+                                            <input type="checkbox" class="checkbox-input" data-row-id="2">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="editable-field" value="颜色偏差" placeholder="请输入缺陷名称" data-field-type="text">
+                                    </td>
+                                    <td>
+                                        <select class="editable-field select-readonly" data-field-type="select">
+                                            <option selected>外观缺陷</option>
+                                            <option>尺寸偏差</option>
+                                            <option>功能异常</option>
+                                            <option>其他</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div class="level-checkbox-container">
+                                            <input type="checkbox" class="level-checkbox mild">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="level-checkbox-container">
+                                            <input type="checkbox" class="level-checkbox moderate" checked>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="level-checkbox-container">
+                                            <input type="checkbox" class="level-checkbox severe">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="number-stepper readonly" id="stepper-2">
+                                            <button class="stepper-btn decrease" onclick="UiUtils.decreaseValue('stepper-2')">−</button>
+                                            <input type="number" class="stepper-input" value="10" min="0" max="999" readonly>
+                                            <button class="stepper-btn increase" onclick="UiUtils.increaseValue('stepper-2')">+</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select class="select-field">
+                                            <option>自动标记</option>
+                                            <option selected>人工复检</option>
+                                            <option>暂停生产</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button class="delete-btn" onclick="deleteRow(this, 'excess-warning')">
+                                            <span class="trash-icon">🗑️</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 日志管理页面内容 -->
+                <div class="page-content" id="logManagementPage">
+                    <div class="placeholder-container">
+                        <h2 class="section-title">日志管理</h2>
+
+                        <!-- 日志筛选和搜索 -->
+                        <div class="switch-container">
+                            <div class="switch-item">
+                                <label class="switch-label">开始时间</label>
+                                <input type="datetime-local" class="field-input" id="logStartTime" style="width: 200px;">
+                            </div>
+                            <div class="switch-item">
+                                <label class="switch-label">结束时间</label>
+                                <input type="datetime-local" class="field-input" id="logEndTime" style="width: 200px;">
+                            </div>
+                            <div class="switch-item">
+                                <label class="switch-label">日志级别</label>
+                                <select class="field-select" id="logLevelFilter" style="width: 150px;">
+                                    <option value="">全部</option>
+                                    <option value="info">信息</option>
+                                    <option value="warning">警告</option>
+                                    <option value="error">错误</option>
+                                    <option value="success">成功</option>
+                                </select>
+                            </div>
+                            <div class="switch-item">
+                                <label class="switch-label">操作类型</label>
+                                <select class="field-select" id="logTypeFilter" style="width: 150px;">
+                                    <option value="">全部</option>
+                                    <option value="page_access">页面访问</option>
+                                    <option value="data_change">数据变更</option>
+                                    <option value="system_config">系统配置</option>
+                                    <option value="user_action">用户操作</option>
+                                </select>
+                            </div>
+                            <div class="switch-item">
+                                <button class="btn btn-primary" onclick="filterLogs()">筛选</button>
+                                <button class="btn" onclick="resetLogFilter()">重置</button>
+                                <button class="btn btn-primary" onclick="exportLogs()">导出日志</button>
+                            </div>
+                        </div>
+
+                        <!-- 日志统计信息 -->
+                        <div class="log-stats-container">
+                            <div class="stat-card">
+                                <div class="stat-title">总日志数</div>
+                                <div class="stat-value" id="totalLogCount">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-title">今日日志</div>
+                                <div class="stat-value" id="todayLogCount">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-title">错误日志</div>
+                                <div class="stat-value" id="errorLogCount">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-title">系统操作</div>
+                                <div class="stat-value" id="systemLogCount">0</div>
+                            </div>
+                        </div>
+
+                        <!-- 日志表格 -->
+                        <table class="warning-table" id="logTable">
+                            <thead>
+                                <tr>
+                                    <th width="80">级别</th>
+                                    <th width="150">时间</th>
+                                    <th width="120">操作类型</th>
+                                    <th width="200">用户/模块</th>
+                                    <th width="300">操作描述</th>
+                                    <th width="150">详细信息</th>
+                                    <th width="100">IP地址</th>
+                                    <th width="80">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logTableBody">
+                                <!-- 日志数据将动态插入这里 -->
+                            </tbody>
+                        </table>
+
+                        <!-- 分页控件 -->
+                        <div class="pagination-container">
+                            <div class="pagination-info">
+                                显示 <span id="currentStart">0</span> - <span id="currentEnd">0</span> 条，共 <span id="totalLogs">0</span> 条
+                            </div>
+                            <div class="pagination-controls">
+                                <button class="btn" onclick="goToFirstPage()">首页</button>
+                                <button class="btn" onclick="goToPrevPage()">上一页</button>
+                                <span class="page-info">第 <span id="currentPage">1</span> 页，共 <span id="totalPages">1</span> 页</span>
+                                <button class="btn" onclick="goToNextPage()">下一页</button>
+                                <button class="btn" onclick="goToLastPage()">末页</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mapping 页面内容 -->
+                <div class="page-content" id="mappingPage">
+                    <div class="mapping-container">
+                        <!-- 中间区域：Mapping 主展示区 -->
+                        <div class="mapping-main-area">
+                            <div class="mapping-display">
+                                <div class="mapping-image-placeholder">
+                                    <div class="placeholder-icon">📷</div>
+                                    <div class="placeholder-text">机台 Mapping 图片展示区域</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 右侧栏：参数与配置维护 -->
+                        <div class="mapping-sidebar" id="panel-mapping">
+                            <!-- 基础信息模块 -->
+                            <div class="sidebar-module">
+                                <div class="module-title">基础信息</div>
+                                <div class="module-content">
+                                    <div class="info-field">
+                                        <span class="field-label">机台</span>
+                                        <div class="field-value">
+                                            <input type="text" class="field-input" placeholder="请选择机台" value="机台-001">
+                                        </div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">日期</span>
+                                        <div class="field-value">
+                                            <input type="date" class="field-input" value="2025-12-19">
+                                        </div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">料号</span>
+                                        <div class="field-value">
+                                            <select class="field-select">
+                                                <option selected>料号-A001</option>
+                                                <option>料号-A002</option>
+                                                <option>料号-B001</option>
+                                                <option>料号-B002</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">正反面</span>
+                                        <div class="field-value">
+                                            <div class="toggle-button-group">
+                                                <button class="toggle-btn active" data-value="正面">正面</button>
+                                                <button class="toggle-btn" data-value="反面">反面</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 绘图配置模块 -->
+                            <div class="sidebar-module">
+                                <div class="module-title">
+                                    绘图配置
+                                    <button class="refresh-btn" onclick="refreshDrawingConfig()">🔄</button>
+                                </div>
+                                <div class="module-content">
+                                    <div class="checkbox-field">
+                                        <input type="checkbox" id="defectPoints" checked>
+                                        <label for="defectPoints" class="checkbox-label">缺陷点</label>
+                                    </div>
+                                    <div class="checkbox-field">
+                                        <input type="checkbox" id="heatmap">
+                                        <label for="heatmap" class="checkbox-label">热力图</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 缺陷列表模块 -->
+                            <div class="sidebar-module defect-list-module">
+                                <div class="module-title">缺陷列表</div>
+                                <div class="module-content">
+                                    <!-- 搜索框 -->
+                                    <div class="search-container">
+                                        <span class="search-icon">🔍</span>
+                                        <input type="text" class="search-input" placeholder="查找缺陷..." id="defectSearch">
+                                    </div>
+                                    
+                                    <!-- 全部按钮 -->
+                                    <button class="action-button" onclick="selectAllDefects()">全部</button>
+                                    
+                                    <!-- 缺陷列表 -->
+                                    <div class="defect-list" id="defectList">
+                                        <div class="defect-item">
+                                            <input type="checkbox" class="defect-checkbox" checked>
+                                            <span class="defect-name">表面划痕</span>
+                                        </div>
+                                        <div class="defect-item">
+                                            <input type="checkbox" class="defect-checkbox">
+                                            <span class="defect-name">颜色偏差</span>
+                                        </div>
+                                        <div class="defect-item">
+                                            <input type="checkbox" class="defect-checkbox" checked>
+                                            <span class="defect-name">尺寸偏差</span>
+                                        </div>
+                                        <div class="defect-item">
+                                            <input type="checkbox" class="defect-checkbox">
+                                            <span class="defect-name">功能异常</span>
+                                        </div>
+                                        <div class="defect-item">
+                                            <input type="checkbox" class="defect-checkbox" checked>
+                                            <span class="defect-name">边缘缺陷</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 趋势分析页面内容 -->
+                <div class="page-content" id="trendsPage">
+                    <div class="trends-container">
+                        <!-- 左侧主展示区 -->
+                        <div class="trends-main-area">
+                            <!-- 顶部：6个半圆形仪表盘 -->
+                            <div class="charts-section">
+                                <div class="section-title">Yield 仪表盘</div>
+                                <div class="charts-grid">
+                                    <div class="gauge-chart" id="gauge1stYield"></div>
+                                    <div class="gauge-chart" id="gauge2ndYield"></div>
+                                    <div class="gauge-chart" id="gaugeTotalYield"></div>
+                                    <div class="gauge-chart" id="gaugeAosShape"></div>
+                                    <div class="gauge-chart" id="gaugeDefectRate"></div>
+                                    <div class="gauge-chart" id="gaugeEfficiency"></div>
+                                </div>
+                            </div>
+
+                            <!-- 中部：汇总数据表 -->
+                            <div class="data-table-section">
+                                <div class="section-title">Yield Views 汇总数据</div>
+                                <table class="trends-table" id="yieldTable">
+                                    <thead>
+                                        <tr>
+                                            <th width="80">Item#</th>
+                                            <th width="120">Total</th>
+                                            <th width="120">1st Defected</th>
+                                            <th width="140">1st Non-defected</th>
+                                            <th width="120">1st Yield</th>
+                                            <th width="120">AOS Shape OK</th>
+                                            <th width="120">2nd Yield</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="yieldTableBody">
+                                        <!-- 数据将动态插入这里 -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- 底部：Top 10 缺陷统计表 -->
+                            <div class="defect-stats-section">
+                                <div class="section-title">Top 10 缺陷类型统计</div>
+                                <table class="trends-table" id="defectStatsTable">
+                                    <thead>
+                                        <tr>
+                                            <th width="150">Metric</th>
+                                            <th width="120">Open/Cut</th>
+                                            <th width="100">Short</th>
+                                            <th width="100">Missing</th>
+                                            <th width="100">Pin Hole</th>
+                                            <th width="100">Scratch</th>
+                                            <th width="100">Chip</th>
+                                            <th width="100">Crack</th>
+                                            <th width="100">Stain</th>
+                                            <th width="100">Particle</th>
+                                            <th width="100">Void</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="defectStatsTableBody">
+                                        <!-- 数据将动态插入这里 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 右侧控制栏 -->
+                        <div class="trends-filter-panel">
+                            <div class="filter-module">
+                                <div class="module-title">筛选条件</div>
+                                <div class="module-content">
+                                    <div class="info-field">
+                                        <span class="field-label">From</span>
+                                        <div class="field-value">
+                                            <input type="date" class="field-input" id="trendsFromDate" value="2025-12-01">
+                                        </div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">To</span>
+                                        <div class="field-value">
+                                            <input type="date" class="field-input" id="trendsToDate" value="2025-12-31">
+                                        </div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">Job Name</span>
+                                        <div class="field-value">
+                                            <select class="field-select" id="jobName">
+                                                <option value="">全部</option>
+                                                <option value="JOB001">JOB001</option>
+                                                <option value="JOB002">JOB002</option>
+                                                <option value="JOB003">JOB003</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">Lot Name</span>
+                                        <div class="field-value">
+                                            <select class="field-select" id="lotName">
+                                                <option value="">全部</option>
+                                                <option value="LOT001">LOT001</option>
+                                                <option value="LOT002">LOT002</option>
+                                                <option value="LOT003">LOT003</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">Layer Name</span>
+                                        <div class="field-value">
+                                            <select class="field-select" id="layerName">
+                                                <option value="">全部</option>
+                                                <option value="LAYER1">LAYER1</option>
+                                                <option value="LAYER2">LAYER2</option>
+                                                <option value="LAYER3">LAYER3</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">Barcode</span>
+                                        <div class="field-value">
+                                            <input type="text" class="field-input" id="barcode" placeholder="请输入条码">
+                                        </div>
+                                    </div>
+                                    <div class="filter-buttons">
+                                        <button class="btn btn-primary" onclick="TrendsPage.applyFilter()">Apply</button>
+                                        <button class="btn" onclick="TrendsPage.resetFilter()">Reset</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 单图审图页面内容 -->
+                <div class="page-content" id="singleImageReviewPage">
+                    <div class="single-image-review-container">
+                        <!-- 顶部工具栏 -->
+                        <div class="review-toolbar">
+                            <div class="toolbar-group">
+                                <button class="btn btn-primary" id="uploadBtn" onclick="SingleImageReview.uploadImage()">
+                                    📁 上传图片
+                                </button>
+                                <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="SingleImageReview.handleFileSelect(event)">
+
+                                <button class="btn btn-success" id="aiDetectBtn" onclick="SingleImageReview.runAIDetection()" disabled>
+                                    ✨ AI 一键检测
+                                </button>
+
+                                <button class="btn btn-info" id="drawModeBtn" onclick="SingleImageReview.toggleDrawMode()" disabled>
+                                    ✏️ 画框模式
+                                </button>
+
+                                <button class="btn btn-secondary" id="selectModeBtn" onclick="SingleImageReview.toggleSelectMode()" disabled>
+                                    👆 选择/移动
+                                </button>
+
+                                <button class="btn btn-primary" id="saveBtn" onclick="SingleImageReview.saveResults()" disabled>
+                                    💾 保存结果
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 主要内容区域 - 三栏式布局 -->
+                        <div class="review-main-content">
+                            <!-- 中间栏：Fabric.js 画布 -->
+                            <div class="review-center-panel" id="reviewCenterPanel">
+                                <div class="canvas-container">
+                                    <div class="canvas-wrapper">
+                                        <canvas id="reviewCanvas"></canvas>
+                                        <!-- PCB网格背景 -->
+                                        <div class="pcb-grid-background" id="pcbGridBackground"></div>
+                                        <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+                                            <div class="loading-spinner"></div>
+                                            <div class="loading-text">AI 检测中...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 右侧栏：基础信息、缺陷统计、鹰眼图、缺陷列表和详情 -->
+                            <div class="review-right-panel" id="reviewRightPanel">
+                                <!-- 基础信息模块 -->
+                                <div class="right-panel-module">
+                                    <div class="module-title">基础信息</div>
+                                    <div class="module-content">
+                                        <div class="info-field">
+                                            <label class="field-label">机台</label>
+                                            <input type="text" class="field-input readonly-field" id="machineInput" readonly>
+                                        </div>
+                                        <div class="info-field">
+                                            <label class="field-label">批次</label>
+                                            <input type="text" class="field-input readonly-field" id="lotInput" readonly>
+                                        </div>
+                                        <div class="info-field">
+                                            <label class="field-label">料号</label>
+                                            <input type="text" class="field-input readonly-field" id="partInput" readonly>
+                                        </div>
+                                        <div class="info-field">
+                                            <label class="field-label">板号</label>
+                                            <input type="text" class="field-input readonly-field" id="panelInput" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 缺陷统计模块 -->
+                                <div class="right-panel-module">
+                                    <div class="module-title">缺陷统计</div>
+                                    <div class="module-content">
+                                        <table class="defect-stats-table" id="defectStatsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>类型</th>
+                                                    <th>数量</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="defectStatsBody">
+                                                <!-- 统计数据将动态插入这里 -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- 缺陷列表模块 -->
+                                <div class="right-panel-module">
+                                    <div class="module-title">
+                                        缺陷列表
+                                        <span class="defect-count" id="defectCount">0</span>
+                                    </div>
+                                    <div class="module-content">
+                                        <div class="defect-list" id="defectList">
+                                            <!-- 缺陷项将动态插入这里 -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 详细信息模块 - 水平布局 -->
+                                <div class="right-panel-module">
+                                    <div class="module-title">详细信息</div>
+                                    <div class="module-content">
+                                        <div class="detail-horizontal-layout" id="detailHorizontalLayout">
+                                            <!-- 下拉框选择缺陷 -->
+                                            <div class="detail-selector">
+                                                <label class="selector-label">选择缺陷:</label>
+                                                <select id="defectSelector" class="defect-selector">
+                                                    <option value="">请选择缺陷...</option>
+                                                </select>
+                                            </div>
+
+                                            <!-- 水平布局的详细信息 -->
+                                            <div class="detail-horizontal-row" id="detailHorizontalRow" style="display: none;">
+                                                <div class="detail-horizontal-item">
+                                                    <label>坐标:</label>
+                                                    <span id="detailCoords">X: 0, Y: 0</span>
+                                                </div>
+                                                <div class="detail-horizontal-item">
+                                                    <label>尺寸:</label>
+                                                    <span id="detailSize">宽: 0, 高: 0</span>
+                                                </div>
+                                                <div class="detail-horizontal-item">
+                                                    <label>类型:</label>
+                                                    <select id="detailType">
+                                                        <option value="Scratch">表面划痕</option>
+                                                        <option value="Stain">污点</option>
+                                                        <option value="Chip">碎裂</option>
+                                                        <option value="Crack">裂纹</option>
+                                                        <option value="Particle">颗粒</option>
+                                                        <option value="Void">空洞</option>
+                                                        <option value="Other">其他</option>
+                                                    </select>
+                                                </div>
+                                                <div class="detail-horizontal-item">
+                                                    <label>置信度:</label>
+                                                    <div class="confidence-bar">
+                                                        <div class="confidence-fill" id="confidenceFill"></div>
+                                                        <span class="confidence-text" id="confidenceText">0%</span>
+                                                    </div>
+                                                </div>
+                                                <div class="detail-actions">
+                                                    <button class="btn btn-sm btn-danger" onclick="SingleImageReview.deleteSelectedDefect()">
+                                                        🗑️ 删除
+                                                    </button>
+                                                    <button class="btn btn-sm btn-primary" onclick="SingleImageReview.updateDefectDetails()">
+                                                        ✅ 更新
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 底部栏：快捷操作按钮和状态统计 -->
+                        <div class="review-footer" id="reviewFooter">
+                            <!-- 左侧状态显示 -->
+                            <div class="footer-status">
+                                <span class="status-text" id="footerStatusText">总缺陷数: 0 | 剩余待判: 0</span>
+                            </div>
+
+                            <!-- 右侧操作按钮 -->
+                            <div class="footer-actions">
+                                <button class="btn btn-secondary footer-btn" id="prevBtn" onclick="SingleImageReview.previousImage()" disabled>
+                                    < 上一张
+                                </button>
+                                <button class="btn btn-danger footer-btn" id="rejectBtn" onclick="SingleImageReview.rejectImage()" disabled>
+                                    判定 NG
+                                </button>
+                                <button class="btn btn-success footer-btn" id="acceptBtn" onclick="SingleImageReview.acceptImage()" disabled>
+                                    判定 OK
+                                </button>
+                                <button class="btn btn-primary footer-btn" id="nextBtn" onclick="SingleImageReview.nextImage()" disabled>
+                                    下一张 >
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 多图审图页面内容 -->
+                <div class="page-content" id="multiImageReviewPage">
+                    <div class="multi-image-review-container">
+                        <!-- 顶部工具栏 -->
+                        <div class="multi-image-toolbar">
+                            <div class="toolbar-group">
+                                <input type="file" id="folderInput" webkitdirectory multiple style="display: none;" onchange="MultiImageReview.handleFolderImport(event)">
+                                <button class="btn btn-primary" onclick="document.getElementById('folderInput').click()">
+                                    📁 导入文件夹
+                                </button>
+
+                                <!-- 统计信息 -->
+                                <div class="statistics" id="statistics">
+                                    <div class="stat-item">
+                                        <span class="stat-label">总图片:</span>
+                                        <span class="stat-value">0</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">OK:</span>
+                                        <span class="stat-value success">0</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">NG:</span>
+                                        <span class="stat-value danger">0</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">已判定:</span>
+                                        <span class="stat-value">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 主要内容区域 - Split Layout -->
+                        <div class="multi-image-main-content">
+                            <!-- 左侧：图片网格和分页 -->
+                            <div class="multi-review-grid-area">
+                                <!-- 图片网格容器 -->
+                                <div class="image-grid-container">
+                                    <div class="image-grid" id="imageGrid">
+                                        <!-- 图片卡片将动态插入这里 -->
+                                    </div>
+                                </div>
+
+                                <!-- 分页控件 -->
+                                <div class="pagination-container" id="paginationControls">
+                                    <!-- 分页控件将动态插入这里 -->
+                                </div>
+
+                                <!-- 加载遮罩 -->
+                                <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+                                    <div class="loading-spinner"></div>
+                                    <div class="loading-text">正在导入图片...</div>
+                                </div>
+                            </div>
+
+                            <!-- 右侧：缺陷列表和详情卡片 - 复制单图审图的结构 -->
+                            <div class="review-sidebar" id="multiReviewSidebar">
+                                <!-- 基础信息模块 -->
+                                <div class="sidebar-module">
+                                    <div class="module-title">基础信息</div>
+                                    <div class="module-content">
+                                        <div class="info-field">
+                                            <label class="field-label">文件名</label>
+                                            <input type="text" class="field-input readonly-field" id="multiFileName" readonly value="请选择左侧图片查看详情">
+                                        </div>
+                                        <div class="info-field">
+                                            <label class="field-label">分辨率</label>
+                                            <input type="text" class="field-input readonly-field" id="multiResolution" readonly value="-">
+                                        </div>
+                                        <div class="info-field">
+                                            <label class="field-label">文件大小</label>
+                                            <input type="text" class="field-input readonly-field" id="multiFileSize" readonly value="-">
+                                        </div>
+                                        <div class="info-field">
+                                            <label class="field-label">状态</label>
+                                            <input type="text" class="field-input readonly-field" id="multiStatus" readonly value="-">
+                                        </div>
+                                        <div class="info-field">
+                                            <label class="field-label">缺陷总数</label>
+                                            <input type="text" class="field-input readonly-field" id="multiDefectCount" readonly value="-">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 缺陷列表模块 -->
+                                <div class="sidebar-module">
+                                    <div class="module-title">
+                                        缺陷列表
+                                        <span class="defect-count" id="multiDefectCountBadge">0</span>
+                                    </div>
+                                    <div class="module-content">
+                                        <div class="defect-list" id="multiDefectList">
+                                            <!-- 缺陷项将动态插入这里 -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 详细信息模块 -->
+                                <div class="sidebar-module">
+                                    <div class="module-title">详细信息</div>
+                                    <div class="module-content">
+                                        <div class="detail-horizontal-layout" id="multiDetailLayout">
+                                            <!-- 下拉框选择缺陷 -->
+                                            <div class="detail-selector">
+                                                <label class="selector-label">选择缺陷:</label>
+                                                <select id="multiDefectSelector" class="defect-selector">
+                                                    <option value="">请选择缺陷...</option>
+                                                </select>
+                                            </div>
+
+                                            <!-- 水平布局的详细信息 -->
+                                            <div class="detail-horizontal-row" id="multiDetailRow" style="display: none;">
+                                                <div class="detail-horizontal-item">
+                                                    <label>坐标:</label>
+                                                    <span id="multiDetailCoords">X: 0, Y: 0</span>
+                                                </div>
+                                                <div class="detail-horizontal-item">
+                                                    <label>尺寸:</label>
+                                                    <span id="multiDetailSize">宽: 0, 高: 0</span>
+                                                </div>
+                                                <div class="detail-horizontal-item">
+                                                    <label>类型:</label>
+                                                    <select id="multiDetailType">
+                                                        <option value="Scratch">表面划痕</option>
+                                                        <option value="Stain">污点</option>
+                                                        <option value="Chip">碎裂</option>
+                                                        <option value="Crack">裂纹</option>
+                                                        <option value="Particle">颗粒</option>
+                                                        <option value="Void">空洞</option>
+                                                        <option value="Other">其他</option>
+                                                    </select>
+                                                </div>
+                                                <div class="detail-horizontal-item">
+                                                    <label>置信度:</label>
+                                                    <div class="confidence-bar">
+                                                        <div class="confidence-fill" id="multiConfidenceFill"></div>
+                                                        <span class="confidence-text" id="multiConfidenceText">0%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 底部操作按钮 -->
+                                <div class="details-actions">
+                                    <button class="btn btn-danger" id="multiJudgeNG" onclick="MultiImageReview.judgeImage('NG')" disabled>
+                                        判定 NG
+                                    </button>
+                                    <button class="btn btn-success" id="multiJudgeOK" onclick="MultiImageReview.judgeImage('OK')" disabled>
+                                        判定 OK
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 生产报表页面内容 -->
+                <div class="page-content" id="productionReportPage">
+                    <div class="production-report-container">
+                        <!-- Tab 导航栏 -->
+                        <div class="production-tabs">
+                            <button class="production-tab active" data-tab="realtime" onclick="switchReportTab('realtime')">实时看板</button>
+                            <button class="production-tab" data-tab="capacity" onclick="switchReportTab('capacity')">产能</button>
+                            <button class="production-tab" data-tab="filter-rate" onclick="switchReportTab('filter-rate')">筛选率</button>
+                            <button class="production-tab" data-tab="leakage-rate" onclick="switchReportTab('leakage-rate')">漏出率</button>
+                            <button class="production-tab" data-tab="detection-rate" onclick="switchReportTab('detection-rate')">检出率</button>
+                        </div>
+
+                        <!-- Tab 内容区域 -->
+                        <div class="production-tab-contents">
+                            <!-- Tab 1: 实时看板 -->
+                            <div class="production-tab-content active" id="realtimeTab">
+                                <!-- 筛选栏 -->
+                                <div class="production-filter-bar">
+                                    <div class="filter-item">
+                                        <label class="filter-label">时间范围</label>
+                                        <select class="filter-select">
+                                            <option value="12h" selected>12小时</option>
+                                            <option value="24h">24小时</option>
+                                            <option value="48h">48小时</option>
+                                            <option value="7d">7天</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-item">
+                                        <label class="filter-label">刷新时间</label>
+                                        <select class="filter-select">
+                                            <option value="1min">1分钟</option>
+                                            <option value="5min" selected>5分钟</option>
+                                            <option value="10min">10分钟</option>
+                                            <option value="30min">30分钟</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- 2x2 图表网格 -->
+                                <div class="production-grid">
+                                    <div id="chart-rt-device" style="width: 100%; height: 350px; background-color: #fff; border-radius: 4px; border: 1px solid #e8e8e8;"></div>
+                                    <div id="chart-rt-person" style="width: 100%; height: 350px; background-color: #fff; border-radius: 4px; border: 1px solid #e8e8e8;"></div>
+                                    <div id="chart-rt-ai" style="width: 100%; height: 350px; background-color: #fff; border-radius: 4px; border: 1px solid #e8e8e8;"></div>
+                                    <div id="chart-rt-defect" style="width: 100%; height: 350px; background-color: #fff; border-radius: 4px; border: 1px solid #e8e8e8;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Tab 2: 产能 -->
+                            <div class="production-tab-content" id="capacityTab">
+                                <!-- 筛选栏 -->
+                                <div class="production-filter-bar">
+                                    <div class="filter-item">
+                                        <label class="filter-label">日期范围</label>
+                                        <input type="date" class="filter-input">
+                                        <span class="filter-separator">至</span>
+                                        <input type="date" class="filter-input">
+                                    </div>
+                                    <div class="filter-item">
+                                        <label class="filter-label">机台</label>
+                                        <select class="filter-select">
+                                            <option value="">全部</option>
+                                            <option value="M01">机台-001</option>
+                                            <option value="M02">机台-002</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-item">
+                                        <label class="filter-label">料号</label>
+                                        <select class="filter-select">
+                                            <option value="">全部</option>
+                                            <option value="P01">料号-A001</option>
+                                            <option value="P02">料号-A002</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-primary">查询</button>
+                                </div>
+
+                                <!-- 上半部分：AVI 设备产能 -->
+                                <div class="capacity-section">
+                                    <div id="chart-cap-avi" style="width: 100%; height: 400px; background-color: #fff; border-radius: 4px; border: 1px solid #e8e8e8;"></div>
+                                </div>
+
+                                <!-- 下半部分：VRS 产能 -->
+                                <div class="capacity-section">
+                                    <div id="chart-cap-vrs" style="width: 100%; height: 400px; background-color: #fff; border-radius: 4px; border: 1px solid #e8e8e8;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Tab 3: 筛选率 -->
+                            <div class="production-tab-content" id="filterRateTab">
+                                <!-- 筛选栏 -->
+                                <div class="production-filter-bar">
+                                    <div class="filter-item">
+                                        <label class="filter-label">机台</label>
+                                        <select class="filter-select">
+                                            <option value="">全部</option>
+                                            <option value="M01">机台-001</option>
+                                            <option value="M02">机台-002</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-item">
+                                        <label class="filter-label">料号</label>
+                                        <select class="filter-select">
+                                            <option value="">全部</option>
+                                            <option value="P01">料号-A001</option>
+                                            <option value="P02">料号-A002</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- 大图表区域 -->
+                                <div class="rate-chart-area">
+                                    <div id="chart-rate-filter" style="width: 100%; height: 400px; background-color: #fff; border-radius: 4px; border: 1px solid #e8e8e8;"></div>
+                                </div>
+
+                                <!-- 数据表格区 -->
+                                <div class="rate-table-area">
+                                    <div class="rate-table-wrapper">
+                                        <table class="rate-data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>时间点</th>
+                                                    <th>筛选张数</th>
+                                                    <th>总张数</th>
+                                                    <th>筛选率(%)</th>
+                                                    <th>阈值(%)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>08:00</td>
+                                                    <td>125</td>
+                                                    <td>1000</td>
+                                                    <td>12.5</td>
+                                                    <td>15.0</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>09:00</td>
+                                                    <td>138</td>
+                                                    <td>1050</td>
+                                                    <td>13.1</td>
+                                                    <td>15.0</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>10:00</td>
+                                                    <td>142</td>
+                                                    <td>1020</td>
+                                                    <td>13.9</td>
+                                                    <td>15.0</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- 底部统计 -->
+                                <div class="rate-statistics">
+                                    <span class="stat-item">量产测试图片张数: <strong>10,250</strong></span>
+                                    <span class="stat-item">筛选张数: <strong>1,320</strong></span>
+                                    <span class="stat-item">PPM: <strong>128.8</strong></span>
+                                </div>
+                            </div>
+
+                            <!-- Tab 4: 漏出率 -->
+                            <div class="production-tab-content" id="leakageRateTab">
+                                <!-- 筛选栏 -->
+                                <div class="production-filter-bar">
+                                    <div class="filter-item">
+                                        <label class="filter-label">机台</label>
+                                        <select class="filter-select">
+                                            <option value="">全部</option>
+                                            <option value="M01">机台-001</option>
+                                            <option value="M02">机台-002</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-item">
+                                        <label class="filter-label">料号</label>
+                                        <select class="filter-select">
+                                            <option value="">全部</option>
+                                            <option value="P01">料号-A001</option>
+                                            <option value="P02">料号-A002</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- 大图表区域 -->
+                                <div class="rate-chart-area">
+                                    <div id="chart-rate-leakage" style="width: 100%; height: 400px; background-color: #fff; border-radius: 4px; border: 1px solid #e8e8e8;"></div>
+                                </div>
+
+                                <!-- 数据表格区 -->
+                                <div class="rate-table-area">
+                                    <div class="rate-table-wrapper">
+                                        <table class="rate-data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>时间点</th>
+                                                    <th>漏出数</th>
+                                                    <th>总缺陷数</th>
+                                                    <th>漏出率(%)</th>
+                                                    <th>阈值(%)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>08:00</td>
+                                                    <td>8</td>
+                                                    <td>125</td>
+                                                    <td>6.4</td>
+                                                    <td>10.0</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>09:00</td>
+                                                    <td>11</td>
+                                                    <td>138</td>
+                                                    <td>8.0</td>
+                                                    <td>10.0</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>10:00</td>
+                                                    <td>9</td>
+                                                    <td>142</td>
+                                                    <td>6.3</td>
+                                                    <td>10.0</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- 底部统计 -->
+                                <div class="rate-statistics">
+                                    <span class="stat-item">总缺陷数: <strong>1,320</strong></span>
+                                    <span class="stat-item">漏出数: <strong>95</strong></span>
+                                    <span class="stat-item">漏出率: <strong>7.2%</strong></span>
+                                </div>
+                            </div>
+
+                            <!-- Tab 5: 检出率 -->
+                            <div class="production-tab-content" id="detectionRateTab">
+                                <!-- 筛选栏 -->
+                                <div class="production-filter-bar">
+                                    <div class="filter-item">
+                                        <label class="filter-label">机台</label>
+                                        <select class="filter-select">
+                                            <option value="">全部</option>
+                                            <option value="M01">机台-001</option>
+                                            <option value="M02">机台-002</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-item">
+                                        <label class="filter-label">料号</label>
+                                        <select class="filter-select">
+                                            <option value="">全部</option>
+                                            <option value="P01">料号-A001</option>
+                                            <option value="P02">料号-A002</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- 大图表区域 -->
+                                <div class="rate-chart-area">
+                                    <div id="chart-rate-detection" style="width: 100%; height: 400px; background-color: #fff; border-radius: 4px; border: 1px solid #e8e8e8;"></div>
+                                </div>
+
+                                <!-- 数据表格区 -->
+                                <div class="rate-table-area">
+                                    <div class="rate-table-wrapper">
+                                        <table class="rate-data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>时间点</th>
+                                                    <th>检出数</th>
+                                                    <th>总缺陷数</th>
+                                                    <th>检出率(%)</th>
+                                                    <th>阈值(%)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>08:00</td>
+                                                    <td>117</td>
+                                                    <td>125</td>
+                                                    <td>93.6</td>
+                                                    <td>90.0</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>09:00</td>
+                                                    <td>127</td>
+                                                    <td>138</td>
+                                                    <td>92.0</td>
+                                                    <td>90.0</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>10:00</td>
+                                                    <td>133</td>
+                                                    <td>142</td>
+                                                    <td>93.7</td>
+                                                    <td>90.0</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- 底部统计 -->
+                                <div class="rate-statistics">
+                                    <span class="stat-item">总缺陷数: <strong>1,320</strong></span>
+                                    <span class="stat-item">检出数: <strong>1,225</strong></span>
+                                    <span class="stat-item">检出率: <strong>92.8%</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- 机台管理页面内容 -->
+                <div class="page-content" id="machineManagementPage">
+                    <div class="machine-management-container">
+                        <!-- 顶部工具栏 -->
+                        <div class="machine-toolbar">
+                            <div class="toolbar-group">
+                                <button class="btn btn-primary" onclick="MachineManagement.openAddMachineModal()">
+                                    ➕ 添加机台
+                                </button>
+                                <button class="btn btn-secondary" onclick="MachineManagement.batchConfigure()">
+                                    ⚙️ 批量配置
+                                </button>
+                                <button class="btn btn-info" onclick="MachineManagement.refreshStatus()">
+                                    🔄 刷新状态
+                                </button>
+                            </div>
+                            <div class="search-group">
+                                <input type="text" class="search-input" id="machineSearch" placeholder="搜索机台名称/IP..." oninput="MachineManagement.filterMachines()">
+                                <span class="search-icon">🔍</span>
+                            </div>
+                        </div>
+
+                        <!-- 机台卡片网格 -->
+                        <div class="machine-grid" id="machineGrid">
+                            <!-- 机台卡片将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+
+                    <!-- 右侧详情抽屉 -->
+                    <div class="machine-detail-drawer" id="machineDetailDrawer">
+                        <div class="drawer-header">
+                            <div class="drawer-title">机台详情</div>
+                            <button class="drawer-close" onclick="MachineManagement.closeDetailDrawer()">&times;</button>
+                        </div>
+                        <div class="drawer-content">
+                            <!-- 基础信息模块 -->
+                            <div class="drawer-module">
+                                <div class="module-title">基础信息</div>
+                                <div class="module-content">
+                                    <div class="info-field">
+                                        <span class="field-label">机台名称</span>
+                                        <div class="field-value" id="detailMachineName">-</div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">厂商</span>
+                                        <div class="field-value" id="detailVendor">-</div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">型号</span>
+                                        <div class="field-value" id="detailModel">-</div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">序列号</span>
+                                        <div class="field-value" id="detailSerialNumber">-</div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">安装位置</span>
+                                        <div class="field-value" id="detailLocation">-</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 连接配置模块 -->
+                            <div class="drawer-module">
+                                <div class="module-title">连接配置</div>
+                                <div class="module-content">
+                                    <div class="info-field">
+                                        <span class="field-label">IP 地址</span>
+                                        <div class="field-value" id="detailIpAddress">-</div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">端口</span>
+                                        <div class="field-value" id="detailPort">-</div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">通讯协议</span>
+                                        <div class="field-value" id="detailProtocol">-</div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">连接状态</span>
+                                        <div class="field-value" id="detailConnectionStatus">-</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 关联配置模块 -->
+                            <div class="drawer-module">
+                                <div class="module-title">关联配置</div>
+                                <div class="module-content">
+                                    <div class="info-field">
+                                        <span class="field-label">检测模型版本</span>
+                                        <div class="field-value" id="detailModelVersion">-</div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">阈值模板</span>
+                                        <div class="field-value" id="detailThresholdTemplate">-</div>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="field-label">当前料号</span>
+                                        <div class="field-value" id="detailCurrentPart">-</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 最近报警模块 -->
+                            <div class="drawer-module">
+                                <div class="module-title">最近报警</div>
+                                <div class="module-content">
+                                    <div class="alarm-list" id="alarmList">
+                                        <!-- 报警记录将动态插入这里 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-content" id="versionManagementPage">
+                    <div class="board-type-management-container">
+                        <!-- 左侧配置区 -->
+                        <div class="board-type-config-panel">
+                            <!-- 参数设置区域 -->
+                            <div class="config-section">
+                                <h3 class="section-title">基本信息</h3>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">版型名称</label>
+                                        <input type="text" class="form-input" id="boardTypeName" placeholder="请输入版型名称">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">备注</label>
+                                        <textarea class="form-textarea compact-textarea" id="boardTypeDesc" placeholder="请输入备注信息"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="config-section">
+                                <h3 class="section-title">拼板参数</h3>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">行数</label>
+                                        <input type="number" class="form-input" id="rows" min="1" max="20" value="2">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">列数</label>
+                                        <input type="number" class="form-input" id="columns" min="1" max="20" value="3">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">单元宽 (mm)</label>
+                                        <input type="number" class="form-input" id="unitWidth" min="1" max="100" step="0.1" value="20">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">单元高 (mm)</label>
+                                        <input type="number" class="form-input" id="unitHeight" min="1" max="100" step="0.1" value="20">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">间距 X (mm)</label>
+                                        <input type="number" class="form-input" id="gapX" min="0" max="10" step="0.1" value="2">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">间距 Y (mm)</label>
+                                        <input type="number" class="form-input" id="gapY" min="0" max="10" step="0.1" value="2">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="config-section preview-section">
+                                <div class="section-header">
+                                    <h3 class="section-title">可视化预览</h3>
+                                </div>
+                                <div class="preview-container">
+                                    <div class="board-preview" id="boardPreview">
+                                        <!-- 预览内容将通过JavaScript动态生成 -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 保存按钮移到最底部 -->
+                            <div class="config-section">
+                                <div class="form-actions">
+                                    <button class="btn btn-primary" id="saveBoardTypeBtn">保存</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧列表栏 -->
+                        <div class="board-type-list-panel">
+                            <div class="panel-header">
+                                <button class="btn btn-primary" id="newBoardTypeBtn">➕ 新建版型</button>
+                            </div>
+                            <div class="search-container">
+                                <input type="text" class="search-input" id="boardTypeSearch" placeholder="搜索版型名称...">
+                                <span class="search-icon">🔍</span>
+                            </div>
+                            <div class="board-type-list" id="boardTypeList">
+                                <!-- 版型列表将通过JavaScript动态生成 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-content" id="materialManagementPage">
+                    <div class="material-management-container">
+                        <!-- 顶部操作栏 -->
+                        <div class="material-management-header">
+                            <div class="header-left">
+                                <button class="btn btn-primary" id="newMaterialBtn">+ 新建料号</button>
+                                <button class="btn btn-secondary" id="importMaterialBtn">批量导入</button>
+                            </div>
+                            <div class="header-right">
+                                <div class="filter-bar">
+                                    <div class="filter-item">
+                                        <input type="text" class="filter-input" id="materialSearchInput" placeholder="搜索料号或客户名称">
+                                    </div>
+                                    <div class="filter-item">
+                                        <select class="filter-select" id="customerFilter">
+                                            <option value="">全部客户</option>
+                                            <option value="客户A">客户A</option>
+                                            <option value="客户B">客户B</option>
+                                            <option value="客户C">客户C</option>
+                                            <option value="客户D">客户D</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-item">
+                                        <select class="filter-select" id="statusFilter">
+                                            <option value="">全部状态</option>
+                                            <option value="active">启用</option>
+                                            <option value="inactive">停用</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-actions">
+                                        <button class="btn btn-primary" id="queryMaterialBtn">查询</button>
+                                        <button class="btn btn-default" id="resetMaterialBtn">重置</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 主体表格 -->
+                        <div class="material-table-container">
+                            <table class="material-table" id="materialTable">
+                                <thead>
+                                    <tr>
+                                        <th width="60">序号</th>
+                                        <th>料号 (Part No)</th>
+                                        <th>客户名称</th>
+                                        <th>关联版型</th>
+                                        <th>关联模型</th>
+                                        <th>检测阈值</th>
+                                        <th>创建时间</th>
+                                        <th width="80">状态</th>
+                                        <th width="180">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="materialTableBody">
+                                    <!-- 数据将通过JavaScript动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-content" id="modelManagementPage">
+                    <div class="model-management-container">
+                        <!-- 顶部操作栏 -->
+                        <div class="model-management-header">
+                            <div class="header-left">
+                                <button class="btn btn-primary" id="newModelBtn">+ 新建模型</button>
+                            </div>
+                            <div class="header-right">
+                                <div class="filter-bar">
+                                    <div class="filter-item">
+                                        <input type="text" class="filter-input" id="modelNameFilter" placeholder="模型名称">
+                                    </div>
+                                    <div class="filter-item">
+                                        <select class="filter-select" id="deviceFilter">
+                                            <option value="">全部设备</option>
+                                            <option value="AOI-01">AOI-01</option>
+                                            <option value="AOI-02">AOI-02</option>
+                                            <option value="AOI-03">AOI-03</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-item">
+                                        <select class="filter-select" id="stepFilter">
+                                            <option value="">全部步骤</option>
+                                            <option value="pre-processing">预处理</option>
+                                            <option value="detection">检测</option>
+                                            <option value="classification">分类</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-item">
+                                        <input type="date" class="filter-input" id="updateTimeFilter">
+                                    </div>
+                                    <div class="filter-actions">
+                                        <button class="btn btn-primary" id="queryBtn">查询</button>
+                                        <button class="btn btn-default" id="resetBtn">重置</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 主体表格 -->
+                        <div class="model-table-container">
+                            <table class="model-table" id="modelTable">
+                                <thead>
+                                    <tr>
+                                        <th width="40"></th>
+                                        <th width="60">序号</th>
+                                        <th>模型名称</th>
+                                        <th>最新版本</th>
+                                        <th>版本数量</th>
+                                        <th>Device</th>
+                                        <th>Step</th>
+                                        <th>标签文件名</th>
+                                        <th>更新时间</th>
+                                        <th>描述</th>
+                                        <th width="180">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modelTableBody">
+                                    <!-- 数据将通过JavaScript动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-content" id="labelManagementPage">
+                    <div class="placeholder-container">
+                        <h2 class="section-title">标签管理</h2>
+                        <p style="text-align: center; padding: 40px; color: var(--text-secondary);">标签管理功能正在开发中...</p>
+                    </div>
+                </div>
+
+                <div class="page-content" id="datasetManagementPage">
+                    <div class="placeholder-container">
+                        <h2 class="section-title">数据集管理</h2>
+                        <p style="text-align: center; padding: 40px; color: var(--text-secondary);">数据集管理功能正在开发中...</p>
+                    </div>
+                </div>
+
+                <div class="page-content" id="dataAnnotationPage">
+                    <div class="placeholder-container">
+                        <h2 class="section-title">数据标注</h2>
+                        <p style="text-align: center; padding: 40px; color: var(--text-secondary);">数据标注功能正在开发中...</p>
+                    </div>
+                </div>
+
+                <div class="page-content" id="projectSettingsPage">
+                    <div class="placeholder-container">
+                        <h2 class="section-title">项目设置</h2>
+                        <p style="text-align: center; padding: 40px; color: var(--text-secondary);">项目设置功能正在开发中...</p>
+                    </div>
+                </div>
+
+                <div class="page-content" id="templateConfigPage">
+                    <div class="placeholder-container">
+                        <h2 class="section-title">模版配置</h2>
+                        <p style="text-align: center; padding: 40px; color: var(--text-secondary);">模版配置功能正在开发中...</p>
+                    </div>
+                </div>
+
+                <div class="page-content" id="userManagementPage">
+                    <div class="user-management-container">
+                        <!-- 左侧用户表格区域 -->
+                        <div class="user-table-area">
+                            <!-- 顶部工具栏 -->
+                            <div class="user-toolbar">
+                                <div class="search-group">
+                                    <input type="text" class="search-input" id="userSearch" placeholder="搜索工号或姓名...">
+                                    <span class="search-icon">🔍</span>
+                                </div>
+                                <div class="toolbar-actions">
+                                    <button class="btn btn-primary" onclick="UserManagement.openAddUserModal()">
+                                        ➕ 新增人员
+                                    </button>
+                                    <button class="btn btn-danger" onclick="UserManagement.bulkDeactivate()">
+                                        🚫 批量停用
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 用户数据表格 -->
+                            <div class="user-table-container">
+                                <table class="user-table" id="userTable">
+                                    <thead>
+                                        <tr>
+                                            <th width="50">
+                                                <input type="checkbox" id="selectAllCheckbox" onchange="UserManagement.toggleSelectAll()">
+                                            </th>
+                                            <th width="120">工号</th>
+                                            <th width="120">姓名</th>
+                                            <th width="120">所属角色</th>
+                                            <th width="150">部门</th>
+                                            <th width="160">最后登录时间</th>
+                                            <th width="100">状态</th>
+                                            <th width="150">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="userTableBody">
+                                        <!-- 用户数据将通过JavaScript动态插入 -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- 分页控件 -->
+                            <div class="pagination-container">
+                                <div class="pagination-info">
+                                    显示 <span id="currentStart">0</span> - <span id="currentEnd">0</span> 条，共 <span id="totalUsers">0</span> 条
+                                </div>
+                                <div class="pagination-controls">
+                                    <button class="btn" onclick="UserManagement.goToFirstPage()">首页</button>
+                                    <button class="btn" onclick="UserManagement.goToPrevPage()">上一页</button>
+                                    <span class="page-info">第 <span id="currentPage">1</span> 页，共 <span id="totalPages">1</span> 页</span>
+                                    <button class="btn" onclick="UserManagement.goToNextPage()">下一页</button>
+                                    <button class="btn" onclick="UserManagement.goToLastPage()">末页</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 右侧角色树面板 -->
+                        <div class="role-tree-panel">
+                            <div class="role-tree-header">
+                                <h3>角色树</h3>
+                            </div>
+                            <div class="role-tree-content">
+                                <div class="role-tree-node expanded" data-role="all">
+                                    <div class="role-tree-item active" onclick="UserManagement.selectRole('all')">
+                                        <span class="role-tree-icon">📊</span>
+                                        <span class="role-tree-name">全部人员</span>
+                                        <span class="role-tree-count" id="allCount">(0)</span>
+                                    </div>
+                                </div>
+                                <div class="role-tree-node expanded">
+                                    <div class="role-tree-item" onclick="UserManagement.toggleRoleGroup(this)">
+                                        <span class="role-tree-icon">👥</span>
+                                        <span class="role-tree-name">管理角色</span>
+                                        <span class="role-tree-arrow">▼</span>
+                                    </div>
+                                    <div class="role-tree-children">
+                                        <div class="role-tree-item" data-role="admin" onclick="UserManagement.selectRole('admin')">
+                                            <span class="role-tree-icon">👑</span>
+                                            <span class="role-tree-name">系统管理员</span>
+                                            <span class="role-tree-count" id="adminCount">(0)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="role-tree-node expanded">
+                                    <div class="role-tree-item" onclick="UserManagement.toggleRoleGroup(this)">
+                                        <span class="role-tree-icon">🔧</span>
+                                        <span class="role-tree-name">技术角色</span>
+                                        <span class="role-tree-arrow">▼</span>
+                                    </div>
+                                    <div class="role-tree-children">
+                                        <div class="role-tree-item" data-role="engineer" onclick="UserManagement.selectRole('engineer')">
+                                            <span class="role-tree-icon">⚙️</span>
+                                            <span class="role-tree-name">制程工程师</span>
+                                            <span class="role-tree-count" id="engineerCount">(0)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="role-tree-node expanded">
+                                    <div class="role-tree-item" onclick="UserManagement.toggleRoleGroup(this)">
+                                        <span class="role-tree-icon">🏭</span>
+                                        <span class="role-tree-name">操作角色</span>
+                                        <span class="role-tree-arrow">▼</span>
+                                    </div>
+                                    <div class="role-tree-children">
+                                        <div class="role-tree-item" data-role="operator" onclick="UserManagement.selectRole('operator')">
+                                            <span class="role-tree-icon">🔨</span>
+                                            <span class="role-tree-name">产线操作员</span>
+                                            <span class="role-tree-count" id="operatorCount">(0)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 检验报表页面 -->
+                <div class="page-content" id="inspectionReportPage">
+                    <div class="inspection-report-container">
+                        <h2 class="section-title">检验报表</h2>
+
+                        <!-- 筛选栏 -->
+                        <div class="inspection-filter-bar">
+                            <div class="filter-row">
+                                <div class="filter-item">
+                                    <label class="filter-label">检验员:</label>
+                                    <select class="filter-select" id="inspectorSelect">
+                                        <option value="">全部</option>
+                                        <option value="张三">张三</option>
+                                        <option value="李四">李四</option>
+                                        <option value="王五">王五</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-item">
+                                    <label class="filter-label">机台:</label>
+                                    <select class="filter-select" id="machineSelect">
+                                        <option value="">全部</option>
+                                        <option value="AOI-01">AOI-01</option>
+                                        <option value="AOI-02">AOI-02</option>
+                                        <option value="AOI-03">AOI-03</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-item">
+                                    <label class="filter-label">开始时间:</label>
+                                    <input type="datetime-local" class="filter-input" id="startTime">
+                                </div>
+
+                                <div class="filter-item">
+                                    <label class="filter-label">结束时间:</label>
+                                    <input type="datetime-local" class="filter-input" id="endTime">
+                                </div>
+
+                                <div class="filter-actions">
+                                    <button class="btn btn-primary" id="queryBtn">查询</button>
+                                    <button class="btn btn-default" id="clearBtn">清空</button>
+                                    <button class="btn btn-success" id="exportBtn">导出</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 数据表格 -->
+                        <div class="inspection-table-container">
+                            <table class="inspection-table">
+                                <thead>
+                                    <tr>
+                                        <th>开始日期</th>
+                                        <th>结束日期</th>
+                                        <th>设备</th>
+                                        <th>料号</th>
+                                        <th>批号</th>
+                                        <th>检验员</th>
+                                        <th>实际板数</th>
+                                        <th>良品板数</th>
+                                        <th>不良板数</th>
+                                        <th>不良率</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inspectionTableBody">
+                                    <!-- 数据将通过JavaScript动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 加载状态 -->
+                        <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">正在加载数据...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 参数配置页面 -->
+                <div class="page-content" id="parameterConfigPage">
+                    <div class="parameter-config-container">
+                        <!-- 左侧内容区域 -->
+                        <div class="config-main-panel">
+                            <!-- 复判策略 -->
+                            <div class="config-section active" id="reviewStrategySection">
+                                <h3 class="section-title">复判策略</h3>
+
+                                <!-- 复判模式 -->
+                                <div class="form-group">
+                                    <label class="form-label">复判模式</label>
+                                    <div class="radio-group">
+                                        <label class="radio-option">
+                                            <input type="radio" name="reviewMode" value="ai-only" checked>
+                                            <span class="radio-label">仅 AI</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" name="reviewMode" value="manual-only">
+                                            <span class="radio-label">仅人工</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" name="reviewMode" value="ai-manual">
+                                            <span class="radio-label">AI + 人工复核</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- 自动 Pass/Fail 阈值 -->
+                                <div class="form-group">
+                                    <label class="form-label">自动 Pass/Fail 阈值</label>
+                                    <div class="slider-container">
+                                        <input type="range" class="slider" id="passFailThreshold" min="0" max="100" value="75">
+                                        <span class="slider-value" id="thresholdValue">75%</span>
+                                    </div>
+                                </div>
+
+                                <!-- NG 判定规则 -->
+                                <div class="form-group">
+                                    <label class="form-label">NG 判定规则</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-option">
+                                            <input type="checkbox" checked>
+                                            <span class="checkbox-label">启用 NG 自动判定</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 通讯设置 -->
+                            <div class="config-section" id="communicationSection">
+                                <h3 class="section-title">通讯设置</h3>
+
+                                <!-- MES 服务器 -->
+                                <div class="form-group">
+                                    <label class="form-label">MES 服务器</label>
+                                    <div class="input-with-button">
+                                        <input type="text" class="form-input" id="mesServer" placeholder="192.168.1.100" value="192.168.1.100">
+                                        <button class="btn btn-secondary" onclick="ParameterConfig.testConnection()">测试连接</button>
+                                    </div>
+                                </div>
+
+                                <!-- 端口 & 心跳 -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">端口</label>
+                                        <input type="number" class="form-input" id="mesPort" value="8080" min="1" max="65535">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">心跳间隔(秒)</label>
+                                        <input type="number" class="form-input" id="heartbeatInterval" value="30" min="1" max="300">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 图像存储 -->
+                            <div class="config-section" id="storageSection">
+                                <h3 class="section-title">图像存储</h3>
+
+                                <!-- 路径 -->
+                                <div class="form-group">
+                                    <label class="form-label">存储路径</label>
+                                    <input type="text" class="form-input" id="storagePath" placeholder="/data/images" value="/data/images">
+                                </div>
+
+                                <!-- 保留天数 -->
+                                <div class="form-group">
+                                    <label class="form-label">保留天数</label>
+                                    <input type="number" class="form-input" id="retentionDays" value="30" min="1" max="365">
+                                </div>
+
+                                <!-- 自动清理 -->
+                                <div class="form-group">
+                                    <label class="form-label">自动清理</label>
+                                    <div class="switch-container">
+                                        <label class="switch">
+                                            <input type="checkbox" id="autoCleanup" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                        <span class="switch-label">启用自动清理</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 底部操作栏 -->
+                            <div class="config-footer">
+                                <button class="btn btn-secondary" onclick="ParameterConfig.resetToDefaults()">恢复默认</button>
+                                <button class="btn btn-primary" onclick="ParameterConfig.saveConfiguration()">保存配置</button>
+                            </div>
+                        </div>
+
+                        <!-- 右侧导航菜单 -->
+                        <div class="config-right-sidebar">
+                            <div class="sidebar-nav">
+                                <div class="nav-item active" data-section="reviewStrategySection">
+                                    复判策略
+                                </div>
+                                <div class="nav-item" data-section="communicationSection">
+                                    通讯设置
+                                </div>
+                                <div class="nav-item" data-section="storageSection">
+                                    图像存储
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 日志详情模态框 -->
+        <div class="log-modal" id="logModal">
+            <div class="log-modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">日志详情</div>
+                    <button class="modal-close" onclick="closeLogModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="detail-row">
+                        <div class="detail-label">日志ID:</div>
+                        <div class="detail-value" id="modalLogId">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">时间:</div>
+                        <div class="detail-value" id="modalLogTime">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">级别:</div>
+                        <div class="detail-value" id="modalLogLevel">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">操作类型:</div>
+                        <div class="detail-value" id="modalLogType">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">用户/模块:</div>
+                        <div class="detail-value" id="modalLogUser">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">操作描述:</div>
+                        <div class="detail-value" id="modalLogDescription">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">详细信息:</div>
+                        <div class="detail-value"><pre id="modalLogDetails">-</pre></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">IP地址:</div>
+                        <div class="detail-value" id="modalLogIp">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 添加机台模态框 -->
+        <div class="modal-overlay" id="addMachineModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">添加机台</div>
+                    <button class="modal-close" onclick="MachineManagement.closeAddMachineModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">机台名称 *</label>
+                        <input type="text" class="form-input" id="machineNameInput" placeholder="请输入机台名称">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">厂商</label>
+                        <select class="form-select" id="vendorSelect">
+                            <option value="">请选择厂商</option>
+                            <option value="Omron">欧姆龙</option>
+                            <option value="Keyence">基恩士</option>
+                            <option value="Cognex">康耐视</option>
+                            <option value="Other">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">型号</label>
+                        <input type="text" class="form-input" id="modelInput" placeholder="请输入型号">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">序列号</label>
+                        <input type="text" class="form-input" id="serialNumberInput" placeholder="请输入序列号">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">IP 地址 *</label>
+                        <input type="text" class="form-input" id="ipAddressInput" placeholder="192.168.1.100">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">端口</label>
+                        <input type="number" class="form-input" id="portInput" placeholder="8080" min="1" max="65535">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">通讯协议</label>
+                        <select class="form-select" id="protocolSelect">
+                            <option value="TCP/IP">TCP/IP</option>
+                            <option value="SECS/GEM">SECS/GEM</option>
+                            <option value="HTTP">HTTP</option>
+                            <option value="WebSocket">WebSocket</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">安装位置</label>
+                        <input type="text" class="form-input" id="locationInput" placeholder="请输入安装位置">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" onclick="MachineManagement.closeAddMachineModal()">取消</button>
+                    <button class="btn btn-primary" onclick="MachineManagement.saveMachine()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增/编辑人员模态框 -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="userModalTitle">新增人员</div>
+                <button class="modal-close" onclick="UserManagement.closeUserModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">工号 *</label>
+                    <input type="text" class="form-input" id="userIdInput" placeholder="请输入工号">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">姓名 *</label>
+                    <input type="text" class="form-input" id="userNameInput" placeholder="请输入姓名">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">角色 *</label>
+                    <select class="form-select" id="userRoleSelect">
+                        <option value="">请选择角色</option>
+                        <option value="admin">系统管理员</option>
+                        <option value="engineer">制程工程师</option>
+                        <option value="operator">产线操作员</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">密码 *</label>
+                    <input type="password" class="form-input" id="userPasswordInput" placeholder="请输入密码">
+                    <small class="form-hint" id="passwordHint">新增时必填，编辑时留空表示不修改</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">部门</label>
+                    <input type="text" class="form-input" id="userDepartmentInput" placeholder="请输入部门">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">状态</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="userStatus" value="active" checked>
+                            <span class="radio-label">启用</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="userStatus" value="inactive">
+                            <span class="radio-label">停用</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="UserManagement.closeUserModal()">取消</button>
+                <button class="btn btn-primary" onclick="UserManagement.saveUser()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新建模型弹窗 -->
+    <div class="modal-overlay" id="newModelModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">新建模型</div>
+                <button class="modal-close" id="closeNewModelModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">模型名称</label>
+                    <input type="text" class="form-input" id="newModelName" placeholder="请输入模型名称">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">版本号</label>
+                    <input type="text" class="form-input" id="newModelVersion" placeholder="例如: v1.0.0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">模型文件</label>
+                    <div class="file-upload-container">
+                        <input type="file" id="newModelFile" class="file-input" accept=".pkl,.h5,.pt,.pth,.onnx">
+                        <button type="button" class="file-browse-btn" id="browseModelFile">浏览</button>
+                        <span class="file-name" id="modelFileName">未选择文件</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Device</label>
+                    <select class="form-select" id="newModelDevice">
+                        <option value="">请选择设备</option>
+                        <option value="AOI-01">AOI-01</option>
+                        <option value="AOI-02">AOI-02</option>
+                        <option value="AOI-03">AOI-03</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Step</label>
+                    <select class="form-select" id="newModelStep">
+                        <option value="">请选择步骤</option>
+                        <option value="pre-processing">预处理</option>
+                        <option value="detection">检测</option>
+                        <option value="classification">分类</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">卡控阈值</label>
+                    <div class="stepper-container">
+                        <button class="stepper-btn" id="thresholdDecrease">-</button>
+                        <input type="number" class="stepper-input" id="newModelThreshold" min="0" max="1" step="0.1" value="0.5">
+                        <button class="stepper-btn" id="thresholdIncrease">+</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">标签文件</label>
+                    <div class="file-upload-container">
+                        <input type="file" id="newLabelFile" class="file-input" accept=".json,.csv,.txt">
+                        <button type="button" class="file-browse-btn" id="browseLabelFile">浏览</button>
+                        <span class="file-name" id="labelFileName">未选择文件</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">模型描述</label>
+                    <textarea class="form-textarea" id="newModelDescription" placeholder="请输入模型描述"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" id="cancelNewModel">取消</button>
+                <button class="btn btn-primary" id="confirmNewModel">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入JavaScript模块 -->
+    <script type="module" src="js/pages/modelManagement.js"></script>
+    <script type="module" src="js/pages/materialManagement.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
